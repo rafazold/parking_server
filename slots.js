@@ -14,14 +14,18 @@ const getSlots = (callback) => {
 
 const parkCar = (carId, callback) => {
     getSlots((err, slots) => {
+        let nextAvailableSlot;
         const firstAvailableSlot = slots.find(slot => slot.status === 'available');
+        if (!firstAvailableSlot && slots.length < process.env.PARKINGSIZE) {
+            nextAvailableSlot = new Slot(carId,slots.length + 1, 'full');
+        }
         if (err) {
             callback(err);
-        } else if(!firstAvailableSlot) {
+        } else if(!firstAvailableSlot && process.env.PARKINGSIZE <= slots.length) {
             callback(null, null);            
             } else {
-                const newSlots = slots.filter(slot => slot.slotNumber !== firstAvailableSlot.slotNumber);
-                newSlot = new Slot(carId, firstAvailableSlot.slotNumber, 'full');
+                const newSlots = slots.filter(slot => slot.slotNumber !== nextAvailableSlot || firstAvailableSlot.slotNumber);
+                newSlot = new Slot(carId, nextAvailableSlot.slotNumber || firstAvailableSlot.slotNumber, 'full');
                 newSlots.push(newSlot);
                 fs.writeFile('./parking.json', JSON.stringify(newSlots), () => callback(null, newSlot));
             }
