@@ -1,5 +1,6 @@
 const express = require('express');
 const bodyParser = require('body-parser');
+const slotRoutes = require('./routes/slots');
 
 const app = express();
 
@@ -10,7 +11,7 @@ app.use((req, res, next) => {
    next();
 });
 
-// add my routes here
+slotRoutes(app);
 
 app.listen(3000, () => {
     console.log('server is up')
