@@ -1,7 +1,8 @@
 const fs = require('fs');
+const Slot = require('./classes/slot.js');
 
 const getSlots = (callback) => {
-    fs.readFile('./parking.json', function(err,result) {
+    fs.readFile('./parking.json', (err,result) => {
         if (err) {
             callback(err);
         } else {
@@ -11,7 +12,7 @@ const getSlots = (callback) => {
 }
 
 const getSlotById = (slotId, callback) => {
-    getSlots(function (err, slots) {
+    getSlots((err, slots)  => {
         if (err) {
             callback(err);
         } else if (slots && slots.length) {
@@ -23,7 +24,7 @@ const getSlotById = (slotId, callback) => {
 }
 
 const getCarById = (carId, callback) => {
-    getSlots(function (err, slots) {
+    getSlots((err, slots) => {
         if (err) {
             callback(err);
         } else if (slots && slots.length) {
@@ -34,8 +35,29 @@ const getCarById = (carId, callback) => {
     });
 }
 
+const parkCar = (carId, callback) => {
+    console.log('id: ', carId)
+    getSlots((err, slots) => {
+        const firstAvailableSlot = slots.find(slot => slot.status === 'available');
+        if (err) {
+            callback(err);
+        } else if(!firstAvailableSlot) {
+            callback(null, null);            
+            } else {
+                console.log('trying');
+                const newSlots = slots.filter(slot => slot.slotNumber !== firstAvailableSlot.slotNumber);
+                newSlot = new Slot(carId, firstAvailableSlot.slotNumber);
+                newSlots.push(newSlot);
+                console.log(newSlot);
+                fs.writeFile('./parking.json', JSON.stringify(newSlots), () => callback(null, newSlot));
+            }
+            
+        });
+    }
+
 module.exports = {
     getSlots,
     getSlotById,
-    getCarById
+    getCarById,
+    parkCar
 }

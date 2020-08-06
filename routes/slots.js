@@ -1,4 +1,5 @@
-const {getSlots, getSlotById, getCarById} = require('../slots');
+const {getSlots, getSlotById, getCarById, parkCar} = require('../slots');
+
 
 module.exports = (app) => {
     app
@@ -26,18 +27,18 @@ module.exports = (app) => {
                 }
             })
 
-             // Maybe you want to return something else if both found
             })           
 
-        .put('/api/slots/:cadId', (req, res) => {
-            parkCar(req.params.carId, (err, slot) => {
+        .put('/api/slots/:carId', (req, res) => {
+            parkCar(req.params.carId, (err, newSlot) => {
                 if (err) {
                     res.status(500).end();
-                } else if (!slot) {
-                    res.status(404).json({message: 'so slots available'}).end();
+                } else if (!newSlot){
+                    console.log('wtf');
+                    return res.status(404).json({message: 'no available parking'}).end();
                 } else {
-                    res.json(slot).end();
-                }
-            });
+                    res.json(newSlot).end();
+                   }
+            })
         })
 }
