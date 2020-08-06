@@ -3,10 +3,9 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const slotRoutes = require('./routes/slots');
 const rateLimit = require("express-rate-limit");
-console.log(process.env.RATELIMIT);
  
 const limiter = rateLimit({
-  windowMs: 1000 * 10 * 100, 
+  windowMs: 1000 * 10, 
   max: process.env.RATELIMIT || 10,
   message: {
     error: "Too many requests"
