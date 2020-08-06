@@ -1,4 +1,4 @@
-const {getSlots, getSlotById} = require('../slots');
+const {getSlots, getSlotById, getCarById} = require('../slots');
 
 module.exports = (app) => {
     app
@@ -12,12 +12,20 @@ module.exports = (app) => {
             })
         })
 
-        .get('/api/slots/:slotId', (req, res) => {
-            getSlotById(req.params.slotId, (err, slot) => {
+        .get('/api/slots/:id', (req, res) => {
+            getSlotById(req.params.id, (err, slot) => {
                 if (err) {
                     res.status(500).end()
                 } else if (!slot) {
-                    res.status(404).json({message: 'slot not found'}).end();
+                    getCarById(req.params.id, (err, car) => {
+                        if (err) {
+                            res.status(500).end()
+                        } else if (!car) {
+                            res.status(404).json({message: 'no slot or car found'}).end();
+                        } else {
+                            res.json(car).end();
+                        }
+                    })
                 } else {
                     res.json(slot).end();
                 }

@@ -10,7 +10,7 @@ const getSlots = (callback) => {
     });
 }
 
-function getSlotById(slotId, callback) {
+const getSlotById = (slotId, callback) => {
     getSlots(function (err, slots) {
         if (err) {
             callback(err);
@@ -22,7 +22,20 @@ function getSlotById(slotId, callback) {
     });
 }
 
+const getCarById = (carId, callback) => {
+    getSlots(function (err, slots) {
+        if (err) {
+            callback(err);
+        } else if (slots && slots.length) {
+            callback(null, slots.find(slot => slot.carNumber === carId));
+        } else {
+            callback(null, null);
+        }
+    });
+}
+
 module.exports = {
     getSlots,
-    getSlotById
+    getSlotById,
+    getCarById
 }
